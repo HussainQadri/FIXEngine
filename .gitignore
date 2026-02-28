@@ -41,5 +41,3 @@
 *.dwo
 
 out/
-.clang-format
-CMakeLists.txt
