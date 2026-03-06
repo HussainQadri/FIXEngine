@@ -72,10 +72,12 @@ int totalBytes(std::vector<std::pair<string, string>> parsedMessage) {
         for (char c : currentPair.first) {
             byteValue += static_cast<int>(c);
         }
-
+        byteValue += static_cast<int>('=');
         for (char c : currentPair.second) {
             byteValue += static_cast<int>(c);
         }
+
+        byteValue += 1;
 
         i = i + 1;
         currentPair = parsedMessage.at(i);
@@ -83,13 +85,13 @@ int totalBytes(std::vector<std::pair<string, string>> parsedMessage) {
     return byteValue;
 }
 bool validate(std::pair<string, string> checkSumPair, int byteTotal) {
-    int checkSum = stoi(checkSumPair.second);
-    return checkSum == byteTotal;
+    return stoi(checkSumPair.second) == (byteTotal % 256);
 }
 
 int main() {
-    string testMessage = "8=FIX.4.2|9=49|35=0|49=SENDER|56=TARGET|34=1|52="
-                         "20231024-15:30:00.000|10=3220|";
+    string testMessage = "8=FIX.4.2|9=118|35=D|49=ONIXS|56=CME|34=2|52="
+                         "20240528-09:20:52.111|11=983532-3|21=1|38=100|55="
+                         "NVDA|40=1|54=1|60=20240528-09:20:52.004|10=017|";
     std::vector<std::pair<string, string>> parseResult = Parse(testMessage);
 
     for (std::pair<string, string> pair : parseResult) {
