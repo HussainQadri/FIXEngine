@@ -26,7 +26,7 @@ std::vector<std::pair<string, string>> Parse(string rawFixString) {
     bool readingTag = true;
     for (int i = 0; i < rawFixString.size(); i++) {
         char currentChar = rawFixString[i];
-        if (currentChar == '|') {
+        if (currentChar == '\x01') {
             pairValue.first = tag;
             pairValue.second = value;
             message.push_back(pairValue);
@@ -89,9 +89,22 @@ bool validate(std::pair<string, string> checkSumPair, int byteTotal) {
 }
 
 int main() {
-    string testMessage = "8=FIX.4.2|9=118|35=D|49=ONIXS|56=CME|34=2|52="
-                         "20240528-09:20:52.111|11=983532-3|21=1|38=100|55="
-                         "NVDA|40=1|54=1|60=20240528-09:20:52.004|10=017|";
+    string testMessage = "8=FIX.4.2\x01"
+                         "9=118\x01"
+                         "35=D\x01"
+                         "49=ONIXS\x01"
+                         "56=CME\x01"
+                         "34=2\x01"
+                         "52=20240528-09:20:52.111\x01"
+                         "11=983532-3\x01"
+                         "21=1\x01"
+                         "38=100\x01"
+                         "55=NVDA\x01"
+                         "40=1\x01"
+                         "54=1\x01"
+                         "60=20240528-09:20:52.004\x01"
+                         "10=017\x01";
+
     std::vector<std::pair<string, string>> parseResult = Parse(testMessage);
 
     for (std::pair<string, string> pair : parseResult) {
