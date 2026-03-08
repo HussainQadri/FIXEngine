@@ -1,5 +1,6 @@
 #include "FIXMessage.h"
 #include <exception>
+#include <iostream>
 #include <string>
 using std::string;
 
@@ -117,10 +118,10 @@ bool FIXMessage::validate() const {
     }
 
     try {
-        int expectedCheckSum = stoi(checkSumPair.second);
-        int expectedBodyLength = stoi(checkSumPair.second);
+        int expectedCheckSum = stoi(checkSumPair.second) % 256;
+        int expectedBodyLength = stoi(bodyLengthPair.second);
 
-        int actualCheckSum = calculateTotalBytes();
+        int actualCheckSum = calculateTotalBytes() % 256;
         int actualBodyLength = calculateMessageBodyBytes();
 
         bool checkSumValid = expectedCheckSum == actualCheckSum;
@@ -133,6 +134,7 @@ bool FIXMessage::validate() const {
         }
 
     } catch (const std::exception &) {
+
         return false;
     }
 }

@@ -21,9 +21,9 @@ int main() {
     FIXMessage fixMessage(testMessage);
     if (fixMessage.validate()) {
         std::cout << "The fix message is valid!\n";
+    } else {
+        std::cout << "The fix message is not valid!\n";
     }
-    std::cout << "Calculated message body bytes: "
-              << fixMessage.calculateMessageBodyBytes() << std::endl;
 
     for (int i = 0; i < fixMessage.getFieldCount(); i++) {
         std::cout << "Tag: " << fixMessage.getTagAtIndex(i)
