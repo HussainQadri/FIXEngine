@@ -17,9 +17,13 @@ class FIXMessage {
 
     bool validate() const;
 
+    int calculateTotalBytes() const;
+
+    int calculateMessageBodyBytes() const;
+
   private:
     std::vector<std::pair<string, string>> FixMessage;
     void Parse(const string &rawFixString);
     std::pair<string, string> extractChecksumPair() const;
-    int calculateTotalBytes() const;
+    std::pair<string, string> extractBodyLengthPair() const;
 };

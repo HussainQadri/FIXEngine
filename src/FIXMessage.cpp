@@ -49,6 +49,10 @@ const std::vector<std::pair<string, string>> &FIXMessage::getAllFields() const {
     return FixMessage;
 }
 
+std::pair<string, string> FIXMessage::extractBodyLengthPair() const {
+    return FixMessage.at(1);
+}
+
 std::pair<string, string> FIXMessage::extractChecksumPair() const {
 
     std::pair<string, string> currentPair = FixMessage.at(0);
@@ -82,6 +86,30 @@ int FIXMessage::calculateTotalBytes() const {
     return byteValue;
 }
 
+int FIXMessage::calculateMessageBodyBytes() const {
+    int byteCount = 0;
+
+    for (int i = 2; i < FixMessage.size(); i++) {
+        std::pair<string, string> currentPair = FixMessage.at(i);
+        if (currentPair.first == "10") {
+            break;
+        }
+
+        byteCount += currentPair.first.length();
+        byteCount += 1;
+        byteCount += currentPair.second.length();
+        byteCount += 1;
+    }
+    return byteCount;
+}
+
 bool FIXMessage::validate() const {
-    return stoi(extractChecksumPair().second) == (calculateTotalBytes() % 256);
+    bool checkSumValid =
+        stoi(extractChecksumPair().second) == (calculateTotalBytes() % 256);
+    bool bodyLengthValid =
+        stoi(extractBodyLengthPair().second) == calculateMessageBodyBytes();
+    if (checkSumValid && bodyLengthValid) {
+        return true;
+    }
+    return false;
 }
