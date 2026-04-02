@@ -21,6 +21,7 @@ int main() {
                          "10=017\x01";
 
     FIXMessage fixMessage(testMessage);
+    std::cout << fixDictionary.getFieldName("60") << "\n";
     if (fixMessage.validate()) {
         std::cout << "The fix message is valid!\n";
     } else {
