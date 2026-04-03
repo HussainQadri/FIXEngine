@@ -2,12 +2,12 @@
 #include <pugixml.hpp>
 #include <string>
 #include <unordered_map>
-
 using std::string;
 using std::unordered_map;
 class FIXDictionary {
 private:
     unordered_map<string, string> m_tagValueMap;
+    unordered_map<string, unordered_map<string, string>> m_valueEnumMap;
     pugi::xml_parse_result parsed_xml;
 
 public:
@@ -22,4 +22,6 @@ public:
     void loadDictionary();
 
     void populateDictionary();
+
+    string getEnumDescription(const string& tag, const string& enumValue) const;
 };

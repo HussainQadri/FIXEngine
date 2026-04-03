@@ -14,9 +14,28 @@ void FIXDictionary::loadDictionary() {
     for (pugi::xml_node field : fields) {
         m_tagValueMap[field.attribute("number").value()] =
             field.attribute("name").value();
+
+        for (pugi::xml_node value : field.children("value")) {
+            std::pair<string, string> tagEnumPair;
+            tagEnumPair.first = value.attribute("description").value();
+            tagEnumPair.second = value.attribute("enum").value();
+
+            auto& enumDescriptionMap =
+                m_valueEnumMap[field.attribute("number").value()];
+            enumDescriptionMap[tagEnumPair.second] = tagEnumPair.first;
+        }
     }
 }
 
 string FIXDictionary::getFieldName(const string& tag) const {
     return m_tagValueMap.at(tag);
+}
+
+string FIXDictionary::getEnumDescription(const string& tag,
+                                         const string& enumValue) const {
+    auto query = m_valueEnumMap.find(tag);
+    if (query != m_valueEnumMap.end()) {
+        return query->second.at(enumValue);
+    }
+    return "";
 }
