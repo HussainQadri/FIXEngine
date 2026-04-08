@@ -1,7 +1,10 @@
+#include "FIXDictionary.h"
 #include "FIXMessage.h"
 #include <iostream>
-
+#include <string>
+using std::string;
 int main() {
+    FIXDictionary fixDictionary;
     string testMessage = "8=FIX.4.2\x01"
                          "9=118\x01"
                          "35=D\x01"
@@ -26,8 +29,12 @@ int main() {
     }
 
     for (int i = 0; i < fixMessage.getFieldCount(); i++) {
-        std::cout << "Tag: " << fixMessage.getTagAtIndex(i)
-                  << " Value: " << fixMessage.getValueAtIndex(i) << std::endl;
+        string tag = fixMessage.getTagAtIndex(i);
+        string tagMeaning = fixDictionary.getFieldName(tag);
+        string value = fixMessage.getValueAtIndex(i);
+
+        std::cout << tagMeaning << "=" << value << " "
+                  << fixDictionary.getEnumDescription(tag, value) << "\n";
     }
 
     return 0;
