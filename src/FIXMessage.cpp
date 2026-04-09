@@ -3,9 +3,11 @@
 #include <string>
 using std::string;
 
-FIXMessage::FIXMessage(const string &rawFixString) { Parse(rawFixString); }
+FIXMessage::FIXMessage(const string& rawFixString) {
+    Parse(rawFixString);
+}
 
-void FIXMessage::Parse(const string &rawFixString) {
+void FIXMessage::Parse(const string& rawFixString) {
     std::pair<string, string> pairValue;
     string tag;
     string value;
@@ -15,6 +17,8 @@ void FIXMessage::Parse(const string &rawFixString) {
         if (currentChar == '\x01') {
             pairValue.first = tag;
             pairValue.second = value;
+            tags.insert(tag);
+            values.insert(value);
             FixMessage.push_back(pairValue);
             tag = "";
             value = "";
@@ -44,14 +48,16 @@ string FIXMessage::getValueAtIndex(size_t i) const {
     return FixMessage.at(i).second;
 }
 
-size_t FIXMessage::getFieldCount() const { return FixMessage.size(); }
+size_t FIXMessage::getFieldCount() const {
+    return FixMessage.size();
+}
 
-const std::vector<std::pair<string, string>> &FIXMessage::getAllFields() const {
+const std::vector<std::pair<string, string>>& FIXMessage::getAllFields() const {
     return FixMessage;
 }
 
 std::pair<string, string> FIXMessage::extractBodyLengthPair() const {
-    for (const std::pair<string, string> &currentPair : FixMessage) {
+    for (const std::pair<string, string>& currentPair : FixMessage) {
         if (currentPair.first == "9") {
             return currentPair;
         }
@@ -61,7 +67,7 @@ std::pair<string, string> FIXMessage::extractBodyLengthPair() const {
 }
 
 std::pair<string, string> FIXMessage::extractChecksumPair() const {
-    for (const std::pair<string, string> &currentPair : FixMessage) {
+    for (const std::pair<string, string>& currentPair : FixMessage) {
         if (currentPair.first == "10") {
             return currentPair;
         }
@@ -132,7 +138,7 @@ bool FIXMessage::validate() const {
             return false;
         }
 
-    } catch (const std::exception &) {
+    } catch (const std::exception&) {
 
         return false;
     }

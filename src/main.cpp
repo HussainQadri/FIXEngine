@@ -1,5 +1,6 @@
 #include "FIXDictionary.h"
 #include "FIXMessage.h"
+#include "Heartbeat.h"
 #include <iostream>
 #include <string>
 using std::string;
@@ -20,6 +21,15 @@ int main() {
                          "54=1\x01"
                          "60=20240528-09:20:52.004\x01"
                          "10=017\x01";
+
+    string heartbeat = "8=FIX.4.2\x01"
+                       "9=58\x01"
+                       "35=0\x01"
+                       "49=BuySide\x01"
+                       "56=SellSide\x01"
+                       "34=4\x01"
+                       "52=20190605-12:19:52.060\x01"
+                       "10=165\x01";
 
     FIXMessage fixMessage(testMessage);
     if (fixMessage.validate()) {

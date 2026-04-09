@@ -1,11 +1,15 @@
 #pragma once
 #include <pugixml.hpp>
+#include <set>
 #include <string>
 #include <utility>
 #include <vector>
 using std::string;
 class FIXMessage {
 public:
+    std::set<std::string> tags;
+    std::set<std::string> values;
+
     FIXMessage(const string& rawFixString);
 
     string getTagAtIndex(size_t i) const;
