@@ -53,8 +53,12 @@ enable_testing()
 add_executable(tests tests/test_fixmessage.cpp)
 target_include_directories(tests PRIVATE ${CMAKE_SOURCE_DIR}/src)
 target_link_libraries(tests PRIVATE fixparser Catch2::Catch2WithMain)
+add_executable(dict_tests tests/test_fixdictionary.cpp)
+target_include_directories(dict_tests PRIVATE ${CMAKE_SOURCE_DIR}/src)
+target_link_libraries(dict_tests PRIVATE fixparser Catch2::Catch2WithMain)
 
 # 6. Test Discovery
 include(CTest)
 include(${catch2_SOURCE_DIR}/extras/Catch.cmake)
 catch_discover_tests(tests)
+catch_discover_tests(dict_tests)

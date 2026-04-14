@@ -1,4 +1,5 @@
 #pragma once
+#include "FIXMessage.h"
 #include <pugixml.hpp>
 #include <string>
 #include <unordered_map>
@@ -10,6 +11,9 @@ private:
     unordered_map<string, string> m_tagValueMap;
     unordered_map<string, unordered_map<string, string>> m_valueEnumMap;
     unordered_map<string, string> m_headerFields;
+    unordered_map<string, string> m_trailerFields;
+    unordered_map<string, unordered_map<string, string>> m_messageFields;
+    unordered_map<string, string> m_nameTagMap;
     pugi::xml_parse_result parsed_xml;
 
 public:
@@ -23,5 +27,11 @@ public:
 
     void loadHeaderFields(const pugi::xml_document& doc);
 
+    void loadTrailerFields(const pugi::xml_document& doc);
+
+    void loadMessages(const pugi::xml_document& doc);
+
     string getEnumDescription(const string& tag, const string& enumValue) const;
+
+    bool validate(const FIXMessage& fixMessage) const;
 };

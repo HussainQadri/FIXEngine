@@ -16,15 +16,3 @@ bool Heartbeat::validate() const {
 std::string Heartbeat::msgType() const {
     return "0";
 }
-
-bool Heartbeat::containsAllMandatoryTags(
-    std::set<std::string> m_mandatoryTags) {
-
-    for (const std::string& tag : m_mandatoryTags) {
-        if (!tags.contains(tag)) {
-            return false;
-        }
-    }
-
-    return true;
-}

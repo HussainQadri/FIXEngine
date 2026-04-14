@@ -2,6 +2,7 @@
 #include <iostream>
 #include <pugixml.hpp>
 #include <string>
+#include <unordered_map>
 using std::string;
 
 FIXDictionary::FIXDictionary() {
@@ -15,6 +16,9 @@ void FIXDictionary::loadDictionary() {
         m_tagValueMap[field.attribute("number").value()] =
             field.attribute("name").value();
 
+        m_nameTagMap[field.attribute("name").value()] =
+            field.attribute("number").value();
+
         for (pugi::xml_node value : field.children("value")) {
             std::pair<string, string> tagEnumPair;
             tagEnumPair.first = value.attribute("description").value();
@@ -27,7 +31,10 @@ void FIXDictionary::loadDictionary() {
     }
 
     loadHeaderFields(doc);
+    loadTrailerFields(doc);
+    loadMessages(doc);
 }
+
 void FIXDictionary::loadHeaderFields(const pugi::xml_document& doc) {
     pugi::xml_node headerFields = doc.child("fix").child("header");
     for (pugi::xml_node headerField : headerFields) {
@@ -35,6 +42,30 @@ void FIXDictionary::loadHeaderFields(const pugi::xml_document& doc) {
             headerField.attribute("required").value();
     }
 }
+
+void FIXDictionary::loadTrailerFields(const pugi::xml_document& doc) {
+    pugi::xml_node trailerFields = doc.child("fix").child("trailer");
+    for (pugi::xml_node trailerField : trailerFields) {
+        m_trailerFields[trailerField.attribute("name").value()] =
+            trailerField.attribute("required").value();
+    }
+}
+
+void FIXDictionary::loadMessages(const pugi::xml_document& doc) {
+    pugi::xml_node messageFields = doc.child("fix").child("messages");
+
+    for (pugi::xml_node messageType : messageFields) {
+        for (pugi::xml_node messageField : messageType) {
+
+            std::unordered_map<string, string>& requiredMsgTypeFields =
+                m_messageFields[messageType.attribute("msgtype").value()];
+
+            requiredMsgTypeFields[messageField.attribute("name").value()] =
+                messageField.attribute("required").value();
+        }
+    }
+}
+
 string FIXDictionary::getFieldName(const string& tag) const {
     if (isValidTag(tag)) {
         return m_tagValueMap.at(tag);
@@ -61,4 +92,36 @@ bool FIXDictionary::isValidTag(const string& tag) const {
     }
 
     return false;
+}
+
+bool FIXDictionary::validate(const FIXMessage& fixMessage) const {
+    // Validate header
+    for (const std::pair<string, string>& tagValuePair : m_headerFields) {
+        const string& tag = m_nameTagMap.at(tagValuePair.first);
+        if (tagValuePair.second == "Y" && fixMessage.getValue(tag) == "") {
+            return false;
+        }
+    }
+
+    // Validate message body
+    string msgType = fixMessage.getValue("35");
+    unordered_map<string, string> requiredFieldsMap =
+        m_messageFields.at(msgType); // this can throw
+    for (const std::pair<string, string>& nameRequiredPair :
+         requiredFieldsMap) {
+        const string& tag = m_nameTagMap.at(nameRequiredPair.first);
+        if (nameRequiredPair.second == "Y" && fixMessage.getValue(tag) == "") {
+            return false;
+        }
+    }
+
+    // Validate trailer
+    for (const std::pair<string, string>& tagValuePair : m_trailerFields) {
+        const string& tag = m_nameTagMap.at(tagValuePair.first);
+        if (tagValuePair.second == "Y" && fixMessage.getValue(tag) == "") {
+            return false;
+        }
+    }
+
+    return true;
 }
