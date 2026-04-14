@@ -17,6 +17,7 @@ void FIXMessage::Parse(const string& rawFixString) {
         if (currentChar == '\x01') {
             pairValue.first = tag;
             pairValue.second = value;
+            m_tagValuePairs[tag] = value;
             tags.insert(tag);
             values.insert(value);
             FixMessage.push_back(pairValue);
@@ -46,6 +47,24 @@ string FIXMessage::getTagAtIndex(size_t i) const {
 
 string FIXMessage::getValueAtIndex(size_t i) const {
     return FixMessage.at(i).second;
+}
+
+string FIXMessage::getValue(const string& tag) const {
+    if (m_tagValuePairs.contains(tag)) {
+        return m_tagValuePairs.at(tag);
+    }
+    return "";
+}
+
+std::vector<string> FIXMessage::getValues(const string& tag) const {
+    std::vector<string> res;
+    for (const std::pair<string, string>& currentPair : FixMessage) {
+        if (currentPair.first == tag) {
+            res.push_back(currentPair.second);
+        }
+    }
+
+    return res;
 }
 
 size_t FIXMessage::getFieldCount() const {

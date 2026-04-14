@@ -1,5 +1,0 @@
-CompileFlags:
-  CompilationDatabase: out/Debug
-
-Diagnostics:
-  UnusedIncludes: Strict

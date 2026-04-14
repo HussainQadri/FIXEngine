@@ -1,6 +1,5 @@
 #pragma once
 #include "FIXMessage.h"
-#include <string>
 
 class TypedMessage : public FIXMessage {
 public:
