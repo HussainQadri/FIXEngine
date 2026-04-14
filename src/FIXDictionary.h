@@ -12,6 +12,7 @@ private:
     unordered_map<string, string> m_headerFields;
     unordered_map<string, string> m_trailerFields;
     unordered_map<string, unordered_map<string, string>> m_messageFields;
+    unordered_map<string, string> m_nameTagMap;
     pugi::xml_parse_result parsed_xml;
 
 public:

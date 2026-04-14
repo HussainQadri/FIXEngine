@@ -16,6 +16,9 @@ void FIXDictionary::loadDictionary() {
         m_tagValueMap[field.attribute("number").value()] =
             field.attribute("name").value();
 
+        m_nameTagMap[field.attribute("name").value()] =
+            field.attribute("number").value();
+
         for (pugi::xml_node value : field.children("value")) {
             std::pair<string, string> tagEnumPair;
             tagEnumPair.first = value.attribute("description").value();
