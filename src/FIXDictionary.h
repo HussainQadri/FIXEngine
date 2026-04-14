@@ -10,6 +10,7 @@ private:
     unordered_map<string, string> m_tagValueMap;
     unordered_map<string, unordered_map<string, string>> m_valueEnumMap;
     unordered_map<string, string> m_headerFields;
+    unordered_map<string, string> m_trailerFields;
     pugi::xml_parse_result parsed_xml;
 
 public:
@@ -22,6 +23,8 @@ public:
     void loadDictionary();
 
     void loadHeaderFields(const pugi::xml_document& doc);
+
+    void loadTrailerFields(const pugi::xml_document& doc);
 
     string getEnumDescription(const string& tag, const string& enumValue) const;
 };

@@ -27,14 +27,25 @@ void FIXDictionary::loadDictionary() {
     }
 
     loadHeaderFields(doc);
+    loadTrailerFields(doc);
 }
+
 void FIXDictionary::loadHeaderFields(const pugi::xml_document& doc) {
-    pugi::xml_node headerFields = doc.child("fix").child("header");
+    pugi::xml_node headerFields = doc.child("fix").child("trailer");
     for (pugi::xml_node headerField : headerFields) {
         m_headerFields[headerField.attribute("name").value()] =
             headerField.attribute("required").value();
     }
 }
+
+void FIXDictionary::loadTrailerFields(const pugi::xml_document& doc) {
+    pugi::xml_node trailerFields = doc.child("fix").child("header");
+    for (pugi::xml_node trailerField : trailerFields) {
+        m_trailerFields[trailerField.attribute("name").value()] =
+            trailerField.attribute("required").value();
+    }
+}
+
 string FIXDictionary::getFieldName(const string& tag) const {
     if (isValidTag(tag)) {
         return m_tagValueMap.at(tag);
