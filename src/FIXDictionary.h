@@ -11,6 +11,7 @@ private:
     unordered_map<string, unordered_map<string, string>> m_valueEnumMap;
     unordered_map<string, string> m_headerFields;
     unordered_map<string, string> m_trailerFields;
+    unordered_map<string, unordered_map<string, string>> m_messageFields;
     pugi::xml_parse_result parsed_xml;
 
 public:
@@ -25,6 +26,8 @@ public:
     void loadHeaderFields(const pugi::xml_document& doc);
 
     void loadTrailerFields(const pugi::xml_document& doc);
+
+    void loadMessages(const pugi::xml_document& doc);
 
     string getEnumDescription(const string& tag, const string& enumValue) const;
 };

@@ -2,6 +2,7 @@
 #include <iostream>
 #include <pugixml.hpp>
 #include <string>
+#include <unordered_map>
 using std::string;
 
 FIXDictionary::FIXDictionary() {
@@ -28,6 +29,7 @@ void FIXDictionary::loadDictionary() {
 
     loadHeaderFields(doc);
     loadTrailerFields(doc);
+    loadMessages(doc);
 }
 
 void FIXDictionary::loadHeaderFields(const pugi::xml_document& doc) {
@@ -43,6 +45,21 @@ void FIXDictionary::loadTrailerFields(const pugi::xml_document& doc) {
     for (pugi::xml_node trailerField : trailerFields) {
         m_trailerFields[trailerField.attribute("name").value()] =
             trailerField.attribute("required").value();
+    }
+}
+
+void FIXDictionary::loadMessages(const pugi::xml_document& doc) {
+    pugi::xml_node messageFields = doc.child("fix").child("messages");
+
+    for (pugi::xml_node messageType : messageFields) {
+        for (pugi::xml_node messageField : messageType) {
+
+            std::unordered_map<string, string>& requiredMsgTypeFields =
+                m_messageFields[messageType.attribute("msgtype").value()];
+
+            requiredMsgTypeFields[messageField.attribute("name").value()] =
+                messageField.attribute("required").value();
+        }
     }
 }
 
