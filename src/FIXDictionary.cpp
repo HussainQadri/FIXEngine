@@ -93,3 +93,35 @@ bool FIXDictionary::isValidTag(const string& tag) const {
 
     return false;
 }
+
+bool FIXDictionary::validate(const FIXMessage& fixMessage) const {
+    // Validate header
+    for (const std::pair<string, string>& tagValuePair : m_headerFields) {
+        const string& tag = m_nameTagMap.at(tagValuePair.first);
+        if (tagValuePair.second == "Y" && fixMessage.getValue(tag) == "") {
+            return false;
+        }
+    }
+
+    // Validate message body
+    string msgType = fixMessage.getValue("35");
+    unordered_map<string, string> requiredFieldsMap =
+        m_messageFields.at(msgType); // this can throw
+    for (const std::pair<string, string>& nameRequiredPair :
+         requiredFieldsMap) {
+        const string& tag = m_nameTagMap.at(nameRequiredPair.first);
+        if (nameRequiredPair.second == "Y" && fixMessage.getValue(tag) == "") {
+            return false;
+        }
+    }
+
+    // Validate trailer
+    for (const std::pair<string, string>& tagValuePair : m_trailerFields) {
+        const string& tag = m_nameTagMap.at(tagValuePair.first);
+        if (tagValuePair.second == "Y" && fixMessage.getValue(tag) == "") {
+            return false;
+        }
+    }
+
+    return true;
+}

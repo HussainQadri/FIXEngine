@@ -8,9 +8,6 @@
 using std::string;
 class FIXMessage {
 public:
-    std::set<std::string> tags;
-    std::set<std::string> values;
-    std::unordered_map<string, string> m_tagValuePairs;
     FIXMessage(const string& rawFixString);
 
     string getTagAtIndex(size_t i) const;
@@ -37,4 +34,7 @@ private:
     std::pair<string, string> extractChecksumPair() const;
     std::pair<string, string> extractBodyLengthPair() const;
     pugi::xml_document doc;
+    std::set<std::string> tags;
+    std::set<std::string> values;
+    std::unordered_map<string, string> m_tagValuePairs;
 };

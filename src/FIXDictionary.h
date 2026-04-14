@@ -1,4 +1,5 @@
 #pragma once
+#include "FIXMessage.h"
 #include <pugixml.hpp>
 #include <string>
 #include <unordered_map>
@@ -31,4 +32,6 @@ public:
     void loadMessages(const pugi::xml_document& doc);
 
     string getEnumDescription(const string& tag, const string& enumValue) const;
+
+    bool validate(const FIXMessage& fixMessage) const;
 };
