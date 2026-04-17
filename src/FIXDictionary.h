@@ -34,4 +34,6 @@ public:
     string getEnumDescription(const string& tag, const string& enumValue) const;
 
     bool validate(const FIXMessage& fixMessage) const;
+
+    string nameToTag(const string& name) const;
 };

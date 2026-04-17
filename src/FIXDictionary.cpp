@@ -125,3 +125,13 @@ bool FIXDictionary::validate(const FIXMessage& fixMessage) const {
 
     return true;
 }
+
+string FIXDictionary::nameToTag(const string& name) const {
+    auto res = m_nameTagMap.find(name);
+
+    if (res != m_nameTagMap.end()) {
+        return res->second;
+    }
+
+    return "";
+}
