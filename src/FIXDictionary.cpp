@@ -97,18 +97,21 @@ bool FIXDictionary::isValidTag(const string& tag) const {
 bool FIXDictionary::validate(const FIXMessage& fixMessage) const {
     // Validate header
     for (const std::pair<string, string>& tagValuePair : m_headerFields) {
-        const string& tag = m_nameTagMap.at(tagValuePair.first);
-        if (tagValuePair.second == "Y" && fixMessage.getValue(tag) == "") {
+        auto it = m_nameTagMap.find(tagValuePair.first);
+        if (it == m_nameTagMap.end() ||
+            tagValuePair.second == "Y" &&
+                fixMessage.getValue(it->second) == "") {
             return false;
         }
     }
 
     // Validate message body
     string msgType = fixMessage.getValue("35");
-    unordered_map<string, string> requiredFieldsMap =
-        m_messageFields.at(msgType); // this can throw
-    for (const std::pair<string, string>& nameRequiredPair :
-         requiredFieldsMap) {
+    auto it = m_messageFields.find(msgType);
+    if (it == m_messageFields.end()) {
+        return false;
+    }
+    for (const std::pair<string, string>& nameRequiredPair : it->second) {
         const string& tag = m_nameTagMap.at(nameRequiredPair.first);
         if (nameRequiredPair.second == "Y" && fixMessage.getValue(tag) == "") {
             return false;
@@ -117,8 +120,10 @@ bool FIXDictionary::validate(const FIXMessage& fixMessage) const {
 
     // Validate trailer
     for (const std::pair<string, string>& tagValuePair : m_trailerFields) {
-        const string& tag = m_nameTagMap.at(tagValuePair.first);
-        if (tagValuePair.second == "Y" && fixMessage.getValue(tag) == "") {
+        auto it = m_nameTagMap.find(tagValuePair.first);
+        if (it == m_nameTagMap.end() ||
+            tagValuePair.second == "Y" &&
+                fixMessage.getValue(it->second) == "") {
             return false;
         }
     }
