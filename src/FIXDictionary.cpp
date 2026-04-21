@@ -112,8 +112,10 @@ bool FIXDictionary::validate(const FIXMessage& fixMessage) const {
         return false;
     }
     for (const std::pair<string, string>& nameRequiredPair : it->second) {
-        const string& tag = m_nameTagMap.at(nameRequiredPair.first);
-        if (nameRequiredPair.second == "Y" && fixMessage.getValue(tag) == "") {
+        auto tagIt = m_nameTagMap.find(nameRequiredPair.first);
+        if (tagIt == m_nameTagMap.end() ||
+            nameRequiredPair.second == "Y" &&
+                fixMessage.getValue(tagIt->second) == "") {
             return false;
         }
     }
