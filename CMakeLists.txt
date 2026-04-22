@@ -42,6 +42,8 @@ add_library(fixparser
   src/TestRequest.cpp
   src/ResendRequest.h
   src/ResendRequest.cpp
+  src/SequenceReset.h
+  src/SequenceReset.cpp
 )
 target_include_directories(fixparser PUBLIC ${CMAKE_SOURCE_DIR}/src)
 target_link_libraries(fixparser PUBLIC pugixml::pugixml)
