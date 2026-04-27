@@ -11,3 +11,11 @@ SequenceReset::SequenceReset(const string& rawFixString)
 std::string SequenceReset::msgType() const {
     return "4";
 }
+
+std::string SequenceReset::getGapFillFlag() const {
+    return getValue("123");
+}
+
+std::string SequenceReset::getNewSeqNo() const {
+    return getValue("36");
+}
