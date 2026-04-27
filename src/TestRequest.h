@@ -5,5 +5,5 @@ class TestRequest : public TypedMessage {
 public:
     TestRequest(const string& rawFixString);
     string msgType() const;
-    string testReqID() const;
+    string getTestReqID() const;
 };

@@ -12,9 +12,9 @@ std::string ResendRequest::msgType() const {
     return "2";
 }
 
-std::string ResendRequest::beginSeqNo() const {
+std::string ResendRequest::getBeginSeqNo() const {
     return getValue("7");
 }
-std::string ResendRequest::endSeqNo() const {
+std::string ResendRequest::getEndSeqNo() const {
     return getValue("16");
 }
