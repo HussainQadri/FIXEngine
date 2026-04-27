@@ -11,3 +11,7 @@ TestRequest::TestRequest(const string& rawFixString)
 std::string TestRequest::msgType() const {
     return "5";
 }
+
+std::string TestRequest::testReqID() const {
+    return getValue("112");
+}
