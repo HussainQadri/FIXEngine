@@ -10,3 +10,13 @@ Logout::Logout(const string& rawFixString) : TypedMessage(rawFixString) {
 std::string Logout::msgType() const {
     return "5";
 }
+
+std::string Logout::getText() const {
+    return getValue("58");
+}
+std::string Logout::getEncodedTextLen() const {
+    return getValue("354");
+}
+std::string Logout::getEncodedText() const {
+    return getValue("355");
+}
