@@ -28,8 +28,6 @@ public:
 
     std::vector<string> getValues(const string& tag) const;
 
-    void addField(const std::string& tag, const std::string& value);
-
     std::string serialize() const;
 
 private:
@@ -41,4 +39,6 @@ private:
     std::set<std::string> tags;
     std::set<std::string> values;
     std::unordered_map<string, string> m_tagValuePairs;
+    void addField(std::string& cur_message, const std::string& tag,
+                  const std::string& value);
 };
