@@ -8,6 +8,7 @@
 using std::string;
 class FIXMessage {
 public:
+    FIXMessage();
     FIXMessage(const string& rawFixString);
 
     string getTagAtIndex(size_t i) const;
@@ -39,6 +40,6 @@ private:
     std::set<std::string> tags;
     std::set<std::string> values;
     std::unordered_map<string, string> m_tagValuePairs;
-    void addField(std::string& cur_message, const std::string& tag,
-                  const std::string& value);
+    void appendField(std::string& cur_message, const std::string& tag,
+                     const std::string& value) const;
 };

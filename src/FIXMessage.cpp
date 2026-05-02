@@ -1,7 +1,11 @@
 #include "FIXMessage.h"
 #include <exception>
+#include <iomanip>
+#include <sstream>
 #include <string>
 using std::string;
+
+FIXMessage::FIXMessage() = default;
 
 FIXMessage::FIXMessage(const string& rawFixString) {
     Parse(rawFixString);
@@ -163,7 +167,39 @@ bool FIXMessage::validate() const {
     }
 }
 
-void FIXMessage::addField(std::string& cur_message, const std::string& tag,
-                          const std::string& value) {
+void FIXMessage::appendField(std::string& cur_message, const std::string& tag,
+                             const std::string& value) const {
     cur_message += tag + "=" + value + "\x01";
+}
+
+std::string FIXMessage::serialize() const {
+    string body;
+    for (const auto& [tag, value] : FixMessage) {
+        if (tag == "8" || tag == "9" || tag == "10") {
+            continue;
+        }
+
+        appendField(body, tag, value);
+    }
+
+    string result;
+
+    appendField(result, "8", getValue("8"));
+    appendField(result, "9", std::to_string(body.size()));
+    result += body;
+
+    int byte_sum = 0;
+
+    for (unsigned char c : result) {
+        byte_sum += c;
+    }
+
+    int checksum = byte_sum % 256;
+
+    std::ostringstream oss;
+    oss << std::setw(3) << std::setfill('0') << checksum;
+    std::string checksumString = oss.str();
+    appendField(result, "10", checksumString);
+
+    return result;
 }
