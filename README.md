@@ -48,28 +48,6 @@ FIX looks simple at first because the wire format is just repeated
 
 This repository is for learning those pieces by implementing them directly.
 
-## Project Layout
-
-```text
-src/
-  FIXMessage.h/.cpp        Raw FIX parser and checksum/body-length validation
-  FIXDictionary.h/.cpp     FIX 4.2 dictionary loading and required-field checks
-  FIX42.xml                FIX 4.2 dictionary
-  TypedMessage.h           Base class for typed FIX messages
-  Heartbeat.h/.cpp         MsgType=0
-  TestRequest.h/.cpp       MsgType=1
-  ResendRequest.h/.cpp     MsgType=2
-  SequenceReset.h/.cpp     MsgType=4
-  Logout.h/.cpp            MsgType=5
-  Logon.h/.cpp             MsgType=A
-  main.cpp                 Small demo program
-
-tests/
-  test_fixmessage.cpp      Parser and message self-validation tests
-  test_fixdictionary.cpp   Dictionary lookup and validation tests
-  test_heartbeat.cpp       Typed heartbeat tests
-```
-
 ## Requirements
 
 - CMake 3.15 or newer
