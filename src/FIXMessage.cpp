@@ -24,7 +24,7 @@ void FIXMessage::Parse(const string& rawFixString) {
             m_tagValuePairs[tag] = value;
             tags.insert(tag);
             values.insert(value);
-            FixMessage.push_back(pairValue);
+            fields.push_back(pairValue);
             tag = "";
             value = "";
             readingTag = true;
@@ -46,11 +46,11 @@ void FIXMessage::Parse(const string& rawFixString) {
 }
 
 string FIXMessage::getTagAtIndex(size_t i) const {
-    return FixMessage.at(i).first;
+    return fields.at(i).first;
 }
 
 string FIXMessage::getValueAtIndex(size_t i) const {
-    return FixMessage.at(i).second;
+    return fields.at(i).second;
 }
 
 string FIXMessage::getValue(const string& tag) const {
@@ -62,7 +62,7 @@ string FIXMessage::getValue(const string& tag) const {
 
 std::vector<string> FIXMessage::getValues(const string& tag) const {
     std::vector<string> res;
-    for (const std::pair<string, string>& currentPair : FixMessage) {
+    for (const std::pair<string, string>& currentPair : fields) {
         if (currentPair.first == tag) {
             res.push_back(currentPair.second);
         }
@@ -72,15 +72,15 @@ std::vector<string> FIXMessage::getValues(const string& tag) const {
 }
 
 size_t FIXMessage::getFieldCount() const {
-    return FixMessage.size();
+    return fields.size();
 }
 
 const std::vector<std::pair<string, string>>& FIXMessage::getAllFields() const {
-    return FixMessage;
+    return fields;
 }
 
 std::pair<string, string> FIXMessage::extractBodyLengthPair() const {
-    for (const std::pair<string, string>& currentPair : FixMessage) {
+    for (const std::pair<string, string>& currentPair : fields) {
         if (currentPair.first == "9") {
             return currentPair;
         }
@@ -90,7 +90,7 @@ std::pair<string, string> FIXMessage::extractBodyLengthPair() const {
 }
 
 std::pair<string, string> FIXMessage::extractChecksumPair() const {
-    for (const std::pair<string, string>& currentPair : FixMessage) {
+    for (const std::pair<string, string>& currentPair : fields) {
         if (currentPair.first == "10") {
             return currentPair;
         }
@@ -100,7 +100,7 @@ std::pair<string, string> FIXMessage::extractChecksumPair() const {
 }
 
 int FIXMessage::calculateTotalBytes() const {
-    std::pair<string, string> currentPair = FixMessage.at(0);
+    std::pair<string, string> currentPair = fields.at(0);
     int i = 0;
     int byteValue = 0;
 
@@ -116,7 +116,7 @@ int FIXMessage::calculateTotalBytes() const {
         byteValue += 1;
 
         i = i + 1;
-        currentPair = FixMessage.at(i);
+        currentPair = fields.at(i);
     }
     return byteValue;
 }
@@ -124,8 +124,8 @@ int FIXMessage::calculateTotalBytes() const {
 int FIXMessage::calculateMessageBodyBytes() const {
     int byteCount = 0;
 
-    for (int i = 2; i < FixMessage.size(); i++) {
-        std::pair<string, string> currentPair = FixMessage.at(i);
+    for (int i = 2; i < fields.size(); i++) {
+        std::pair<string, string> currentPair = fields.at(i);
         if (currentPair.first == "10") {
             break;
         }
@@ -174,7 +174,7 @@ void FIXMessage::appendField(std::string& cur_message, const std::string& tag,
 
 std::string FIXMessage::serialize() const {
     string body;
-    for (const auto& [tag, value] : FixMessage) {
+    for (const auto& [tag, value] : fields) {
         if (tag == "8" || tag == "9" || tag == "10") {
             continue;
         }
@@ -202,4 +202,11 @@ std::string FIXMessage::serialize() const {
     appendField(result, "10", checksumString);
 
     return result;
+}
+
+void FIXMessage::addField(const string& tag, const string& value) {
+    fields.push_back({tag, value});
+    m_tagValuePairs[tag] = value;
+    tags.insert(tag);
+    values.insert(value);
 }

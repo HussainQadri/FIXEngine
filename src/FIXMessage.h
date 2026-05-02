@@ -9,6 +9,7 @@ using std::string;
 class FIXMessage {
 public:
     FIXMessage();
+
     FIXMessage(const string& rawFixString);
 
     string getTagAtIndex(size_t i) const;
@@ -31,8 +32,12 @@ public:
 
     std::string serialize() const;
 
+    void addField(const string& tag, const string& value);
+
 private:
-    std::vector<std::pair<string, string>> FixMessage;
+    void appendField(std::string& cur_message, const std::string& tag,
+                     const std::string& value) const;
+    std::vector<std::pair<string, string>> fields;
     void Parse(const string& rawFixString);
     std::pair<string, string> extractChecksumPair() const;
     std::pair<string, string> extractBodyLengthPair() const;
@@ -40,6 +45,4 @@ private:
     std::set<std::string> tags;
     std::set<std::string> values;
     std::unordered_map<string, string> m_tagValuePairs;
-    void appendField(std::string& cur_message, const std::string& tag,
-                     const std::string& value) const;
 };
