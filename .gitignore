@@ -43,3 +43,4 @@
 out/
 build/
 Testing/
+.cache/
