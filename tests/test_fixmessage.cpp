@@ -272,3 +272,44 @@ TEST_CASE("FIXMessage rejects truncated message",
 
     CHECK_FALSE(msg.validate());
 }
+
+TEST_CASE("FIXMessage serialize recalculates BodyLength and CheckSum",
+          "[fix][serialize]") {
+    std::string raw = withSoh("8=FIX.4.2|"
+                              "9=999|"
+                              "35=0|"
+                              "49=SENDER|"
+                              "56=TARGET|"
+                              "34=2|"
+                              "52=20260311-12:00:00.000|"
+                              "10=999|");
+
+    FIXMessage msg(raw);
+    std::string serialized = msg.serialize();
+    FIXMessage reparsed(serialized);
+
+    CHECK(reparsed.validate());
+    CHECK(reparsed.getValue("9") == "55");
+    CHECK(reparsed.getValue("10") == "063");
+}
+
+TEST_CASE("FIXMessage can build and serialize from empty constructor",
+          "[fix][serialize][builder]") {
+    FIXMessage msg;
+    msg.addField("8", "FIX.4.2");
+    msg.addField("35", "0");
+    msg.addField("49", "SENDER");
+    msg.addField("56", "TARGET");
+    msg.addField("34", "2");
+    msg.addField("52", "20260311-12:00:00.000");
+
+    std::string serialized = msg.serialize();
+    FIXMessage reparsed(serialized);
+
+    CHECK(reparsed.validate());
+    CHECK(reparsed.getFieldCount() == 8);
+    CHECK(reparsed.getValue("8") == "FIX.4.2");
+    CHECK(reparsed.getValue("9") == "55");
+    CHECK(reparsed.getValue("35") == "0");
+    CHECK(reparsed.getValue("10") == "063");
+}
