@@ -6,15 +6,23 @@ on:
 
 jobs:
   build-and-test:
-    name: Build and unit tests
+    name: Build and test (${{ matrix.compiler }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [g++, clang++]
 
     steps:
       - name: Check out source
         uses: actions/checkout@v4
 
       - name: Configure
-        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+        run: >
+          cmake -S . -B build
+          -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_CXX_COMPILER=${{ matrix.compiler }}
+          -DFIXENGINE_WARNINGS_AS_ERRORS=ON
 
       - name: Build
         run: cmake --build build --parallel
