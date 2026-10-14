@@ -11,6 +11,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+option(FIXENGINE_WARNINGS_AS_ERRORS "Treat compiler warnings as errors" OFF)
+
+set(FIXENGINE_WARNINGS -Wall -Wextra)
+if(FIXENGINE_WARNINGS_AS_ERRORS)
+  list(APPEND FIXENGINE_WARNINGS -Werror)
+endif()
+
 # 1. Fetch Dependencies
 include(FetchContent)
 FetchContent_Declare(
@@ -49,11 +56,13 @@ add_library(fixengine
 )
 target_include_directories(fixengine PUBLIC ${CMAKE_SOURCE_DIR}/src)
 target_link_libraries(fixengine PUBLIC pugixml::pugixml)
+target_compile_options(fixengine PRIVATE ${FIXENGINE_WARNINGS} -Wpedantic)
 target_compile_definitions(fixengine PRIVATE FIX_DICTIONARY_PATH="${CMAKE_SOURCE_DIR}/spec/FIX42.xml")
 
 # 3. Demo Executable
 add_executable(fixengine_demo examples/demo.cpp)
 target_link_libraries(fixengine_demo PRIVATE fixengine)
+target_compile_options(fixengine_demo PRIVATE ${FIXENGINE_WARNINGS} -Wpedantic)
 
 # 4. Tests
 enable_testing()
@@ -63,6 +72,7 @@ include(${catch2_SOURCE_DIR}/extras/Catch.cmake)
 function(fixengine_add_test name source)
   add_executable(${name} ${source})
   target_link_libraries(${name} PRIVATE fixengine Catch2::Catch2WithMain)
+  target_compile_options(${name} PRIVATE ${FIXENGINE_WARNINGS})
   catch_discover_tests(${name})
 endfunction()
 
