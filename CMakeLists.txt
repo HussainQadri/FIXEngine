@@ -55,26 +55,18 @@ target_compile_definitions(fixengine PRIVATE FIX_DICTIONARY_PATH="${CMAKE_SOURCE
 add_executable(fixengine_demo examples/demo.cpp)
 target_link_libraries(fixengine_demo PRIVATE fixengine)
 
-# 4. Enable Testing (Must be before add_executable for tests)
+# 4. Tests
 enable_testing()
-
-# 5. Test Executable
-add_executable(tests tests/test_fixmessage.cpp)
-target_include_directories(tests PRIVATE ${CMAKE_SOURCE_DIR}/src)
-target_link_libraries(tests PRIVATE fixengine Catch2::Catch2WithMain)
-add_executable(dict_tests tests/test_fixdictionary.cpp)
-target_include_directories(dict_tests PRIVATE ${CMAKE_SOURCE_DIR}/src)
-target_link_libraries(dict_tests PRIVATE fixengine Catch2::Catch2WithMain)
-add_executable(heartbeat_tests tests/test_heartbeat.cpp)
-target_include_directories(heartbeat_tests PRIVATE ${CMAKE_SOURCE_DIR}/src)
-target_link_libraries(heartbeat_tests PRIVATE fixengine Catch2::Catch2WithMain)
-add_executable(session_tests tests/test_fixsession.cpp)
-target_include_directories(session_tests PRIVATE ${CMAKE_SOURCE_DIR}/src)
-target_link_libraries(session_tests PRIVATE fixengine Catch2::Catch2WithMain)
-# 6. Test Discovery
 include(CTest)
 include(${catch2_SOURCE_DIR}/extras/Catch.cmake)
-catch_discover_tests(tests)
-catch_discover_tests(dict_tests)
-catch_discover_tests(heartbeat_tests)
-catch_discover_tests(session_tests)
+
+function(fixengine_add_test name source)
+  add_executable(${name} ${source})
+  target_link_libraries(${name} PRIVATE fixengine Catch2::Catch2WithMain)
+  catch_discover_tests(${name})
+endfunction()
+
+fixengine_add_test(tests tests/test_fixmessage.cpp)
+fixengine_add_test(dict_tests tests/test_fixdictionary.cpp)
+fixengine_add_test(heartbeat_tests tests/test_heartbeat.cpp)
+fixengine_add_test(session_tests tests/test_fixsession.cpp)
