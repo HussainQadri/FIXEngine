@@ -99,8 +99,8 @@ bool FIXDictionary::validate(const FIXMessage& fixMessage) const {
     for (const auto& tagValuePair : m_headerFields) {
         auto it = m_nameTagMap.find(tagValuePair.first);
         if (it == m_nameTagMap.end() ||
-            tagValuePair.second == "Y" &&
-                fixMessage.getValue(it->second) == "") {
+            (tagValuePair.second == "Y" &&
+                fixMessage.getValue(it->second) == "")) {
             return false;
         }
     }
@@ -114,8 +114,8 @@ bool FIXDictionary::validate(const FIXMessage& fixMessage) const {
     for (const auto& nameRequiredPair : it->second) {
         auto tagIt = m_nameTagMap.find(nameRequiredPair.first);
         if (tagIt == m_nameTagMap.end() ||
-            nameRequiredPair.second == "Y" &&
-                fixMessage.getValue(tagIt->second) == "") {
+            (nameRequiredPair.second == "Y" &&
+                fixMessage.getValue(tagIt->second) == "")) {
             return false;
         }
     }
@@ -124,8 +124,8 @@ bool FIXDictionary::validate(const FIXMessage& fixMessage) const {
     for (const auto& tagValuePair : m_trailerFields) {
         auto it = m_nameTagMap.find(tagValuePair.first);
         if (it == m_nameTagMap.end() ||
-            tagValuePair.second == "Y" &&
-                fixMessage.getValue(it->second) == "") {
+            (tagValuePair.second == "Y" &&
+                fixMessage.getValue(it->second) == "")) {
             return false;
         }
     }
