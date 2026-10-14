@@ -1,97 +1,65 @@
 # FIXEngine
 
-FIXEngine is a learning project for building a small FIX engine in modern C++.
+![CI](https://github.com/HussainQadri/FIXEngine/actions/workflows/ci.yml/badge.svg)
 
-The goal is not to compete with QuickFIX or produce production trading
-infrastructure. The goal is to understand how FIX messages are represented,
-validated, typed, sequenced, and eventually exchanged over a session.
+A FIX 4.2 engine written from scratch in C++20. It parses and serializes FIX
+wire messages, validates them against the official XML dictionary, exposes
+typed wrappers for session-level messages, and tracks session state and
+sequence numbers.
 
-At the moment this project is closer to a parser and dictionary validator than a
-full engine. That is intentional: the engine will be built up in layers.
+## Features
 
-## Current Status
+- **Wire format:** parses `tag=value<SOH>` messages while preserving field
+  order, and validates `BodyLength` and `CheckSum`.
+- **Serialization:** builds outbound messages with recalculated `BodyLength`
+  and `CheckSum`.
+- **Dictionary validation:** loads the FIX 4.2 XML dictionary, resolves tag
+  names and enum descriptions, and checks required header, body, and trailer
+  fields for each `MsgType`.
+- **Typed admin messages:** `Heartbeat`, `Logon`, `Logout`, `TestRequest`,
+  `ResendRequest`, and `SequenceReset`.
+- **Session layer:** session state, sequence-number tracking, TestRequest
+  responses, Logout handling, and ResendRequest on sequence gaps.
 
-The current codebase implements the foundation of a FIX engine: message parsing,
-wire-level validation, dictionary-backed metadata, and typed wrappers for core
-admin messages.
+## Architecture
 
-- Parse raw FIX wire messages in `tag=value<SOH>` format.
-- Preserve field order while also supporting tag lookup.
-- Validate `BodyLength` / `CheckSum`.
-- Serialize outbound messages with recalculated `BodyLength` / `CheckSum`.
-- Load a FIX 4.2 XML dictionary.
-- Resolve tag names and enum descriptions from the dictionary.
-- Validate required header, trailer, and message fields for a `MsgType`.
-- Provide basic typed wrappers for common admin messages:
-  - `Heartbeat`
-  - `Logon`
-  - `Logout`
-  - `TestRequest`
-  - `ResendRequest`
-  - `SequenceReset`
-- Provide an initial session layer for admin message construction, session
-  state, sequence-number tracking, TestRequest responses, Logout handling, and
-  resend requests for sequence gaps.
-- Unit tests for parser, dictionary, heartbeat, and session behaviour.
-
-The next stage is to make the session layer more complete: heartbeat
-scheduling, resend/gap-fill replay, persistence, and transport.
-
-## Why This Exists
-
-FIX looks simple at first because the wire format is just repeated
-`tag=value` fields. The difficult part is everything around the message:
-
-- Is the message structurally valid?
-- Are required fields present for this message type?
-- Are sequence numbers correct?
-- What happens when a message is missing?
-- When should a session send a heartbeat?
-- How do logon, logout, resend, and gap-fill flows work?
-
-This repository is for learning those pieces by implementing them directly.
-
-## Requirements
-
-- CMake 3.15 or newer
-- A C++20 compiler
-
-Dependencies are fetched by CMake:
-
-- [Catch2](https://github.com/catchorg/Catch2) for tests
-- [pugixml](https://github.com/zeux/pugixml) for XML parsing
-
-## Build
-
-```sh
-cmake -S . -B build
-cmake --build build -j
+```mermaid
+flowchart LR
+    wire["Raw bytes<br/>8=FIX.4.2␁9=…␁"] --> msg["FIXMessage<br/>parse / serialize<br/>BodyLength + CheckSum"]
+    dict[("spec/FIX42.xml")] --> fd["FIXDictionary<br/>names, enums,<br/>required fields"]
+    msg --> fd
+    msg --> typed["Typed messages<br/>Logon, Heartbeat, …"]
+    typed --> session["FIXSession<br/>state, sequence numbers,<br/>admin responses"]
 ```
 
-## Run Tests
+## Demo
 
-```sh
-ctest --test-dir build --output-on-failure
+`examples/demo.cpp` parses a NewOrderSingle, validates it, and prints each
+field with names resolved from the dictionary:
+
+```text
+$ ./build/fixengine_demo
+BodyLength/CheckSum valid: yes
+Dictionary valid:          yes
+
+8   BeginString   FIX.4.2
+9   BodyLength    118
+35  MsgType       D (NEW_ORDER_SINGLE)
+49  SenderCompID  ONIXS
+56  TargetCompID  CME
+34  MsgSeqNum     2
+52  SendingTime   20240528-09:20:52.111
+11  ClOrdID       983532-3
+21  HandlInst     1 (AUTOMATED_EXECUTION_NO_INTERVENTION)
+38  OrderQty      100
+55  Symbol        NVDA
+40  OrdType       1 (MARKET)
+54  Side          1 (BUY)
+60  TransactTime  20240528-09:20:52.004
+10  CheckSum      017
 ```
 
-You can also run the test binaries directly:
-
-```sh
-./build/tests
-./build/dict_tests
-./build/heartbeat_tests
-./build/session_tests
-```
-
-## Run Demo
-
-```sh
-./build/main
-```
-
-## Example
-
-FIX messages use ASCII `SOH` (`\x01`) as the field separator.
+## Usage
 
 ```cpp
 #include "FIXDictionary.h"
@@ -119,50 +87,51 @@ bool dictionaryValid = dictionary.validate(logon);
 std::string heartbeatInterval = logon.getHeartBtInt();
 ```
 
-## Development Roadmap
+## Building
 
-The intended direction is to grow the project from a parser into a small
-educational FIX engine.
+Requires CMake 3.15+ and a C++20 compiler (tested with GCC and Clang).
+[Catch2](https://github.com/catchorg/Catch2) and
+[pugixml](https://github.com/zeux/pugixml) are fetched automatically.
 
-1. Clean up outbound message construction.
-   - Expand outbound builders beyond the initial admin/session helpers.
+```sh
+cmake -S . -B build
+cmake --build build -j
+ctest --test-dir build --output-on-failure
+```
 
-2. Strengthen dictionary validation.
-   - Validate field types such as `INT`, `BOOLEAN`, `CHAR`, `UTCTIMESTAMP`.
-   - Validate enum domains.
-   - Reject unknown fields where appropriate.
-   - Improve error reporting instead of returning only `true` / `false`.
+Build options:
 
-3. Model admin messages properly.
-   - Add stronger tests for `Logon`, `Logout`, `TestRequest`,
-     `ResendRequest`, and `SequenceReset`.
-   - Separate required and optional fields clearly.
-   - Add constructors/builders for outbound admin messages.
+| Option | Default | Description |
+|---|---|---|
+| `FIXENGINE_WARNINGS_AS_ERRORS` | `OFF` | Treat compiler warnings as errors |
+| `FIXENGINE_SANITIZE` | `OFF` | Build with AddressSanitizer and UndefinedBehaviorSanitizer |
 
-4. Extend session state.
-   - Track sender and target sequence numbers across reconnects.
-   - Handle low sequence numbers and duplicate messages more explicitly.
-   - Add richer session errors instead of silently returning no responses.
+CI builds with GCC and Clang using `-Werror`, runs the test suite under ASan
+and UBSan, and checks formatting with `clang-format`.
 
-5. Implement heartbeat flow.
-   - Send heartbeats on an interval.
-   - Send test requests when the peer is silent.
-   - Disconnect or mark the session unhealthy after timeout.
+## Project Layout
 
-6. Implement resend and gap-fill flow.
-   - Detect sequence gaps.
-   - Send `ResendRequest`.
-   - Process `SequenceReset`.
-   - Store sent messages so they can be resent.
+```text
+src/        engine library (messages, dictionary, session)
+examples/   demo program
+tests/      Catch2 unit tests
+spec/       FIX 4.2 XML dictionary
+```
 
-7. Add transport.
-   - Start with a simple TCP initiator.
-   - Add acceptor support later.
-   - Keep parsing/framing separate from socket code.
+## Roadmap
 
-8. Add application messages (Application layer):
-   - Start with a small subset such as `NewOrderSingle` and
-     `ExecutionReport`.
-   - Keep application logic separate from session logic.
+- [x] Wire parsing, serialization, `BodyLength` / `CheckSum` validation
+- [x] Dictionary-backed field names, enums, and required-field validation
+- [x] Typed admin messages
+- [x] Session state, sequence tracking, and gap detection
+- [ ] Field type and enum domain validation with detailed errors
+- [ ] Heartbeat scheduling and peer timeout handling
+- [ ] Message store with resend and gap-fill replay
+- [ ] TCP initiator, then acceptor
+- [ ] Application messages (`NewOrderSingle`, `ExecutionReport`)
 
+## Scope
 
+FIXEngine is built to understand FIX in depth by implementing it directly,
+layer by layer. It is not intended to replace production engines such as
+QuickFIX.
