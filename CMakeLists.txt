@@ -49,7 +49,7 @@ add_library(fixengine
 )
 target_include_directories(fixengine PUBLIC ${CMAKE_SOURCE_DIR}/src)
 target_link_libraries(fixengine PUBLIC pugixml::pugixml)
-target_compile_definitions(fixengine PRIVATE FIX_DICTIONARY_PATH="${CMAKE_SOURCE_DIR}/src/FIX42.xml")
+target_compile_definitions(fixengine PRIVATE FIX_DICTIONARY_PATH="${CMAKE_SOURCE_DIR}/spec/FIX42.xml")
 
 # 3. Main Executable
 add_executable(main src/main.cpp)
