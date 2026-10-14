@@ -51,9 +51,9 @@ target_include_directories(fixengine PUBLIC ${CMAKE_SOURCE_DIR}/src)
 target_link_libraries(fixengine PUBLIC pugixml::pugixml)
 target_compile_definitions(fixengine PRIVATE FIX_DICTIONARY_PATH="${CMAKE_SOURCE_DIR}/spec/FIX42.xml")
 
-# 3. Main Executable
-add_executable(main src/main.cpp)
-target_link_libraries(main PRIVATE fixengine)
+# 3. Demo Executable
+add_executable(fixengine_demo examples/demo.cpp)
+target_link_libraries(fixengine_demo PRIVATE fixengine)
 
 # 4. Enable Testing (Must be before add_executable for tests)
 enable_testing()
