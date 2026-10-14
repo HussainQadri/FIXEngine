@@ -1,11 +1,12 @@
 #pragma once
 
 #include "TypedMessage.h"
+#include <string>
 
 class SequenceReset : public TypedMessage {
 public:
-    SequenceReset(const string& rawFixString);
-    string msgType() const;
-    string getGapFillFlag() const;
-    string getNewSeqNo() const;
+    SequenceReset(const std::string& rawFixString);
+    std::string msgType() const;
+    std::string getGapFillFlag() const;
+    std::string getNewSeqNo() const;
 };

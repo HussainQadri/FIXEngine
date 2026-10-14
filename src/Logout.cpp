@@ -1,5 +1,6 @@
 #include "Logout.h"
 #include "TypedMessage.h"
+using std::string;
 
 Logout::Logout(const string& rawFixString) : TypedMessage(rawFixString) {
     if (getValue("35") != "5") {

@@ -1,11 +1,12 @@
 #pragma once
 #include "TypedMessage.h"
+#include <string>
 
 class Logout : public TypedMessage {
 public:
-    Logout(const string& rawFixString);
-    string msgType() const;
-    string getText() const;
-    string getEncodedTextLen() const;
-    string getEncodedText() const;
+    Logout(const std::string& rawFixString);
+    std::string msgType() const;
+    std::string getText() const;
+    std::string getEncodedTextLen() const;
+    std::string getEncodedText() const;
 };

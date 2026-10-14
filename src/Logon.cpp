@@ -1,5 +1,6 @@
 #include "Logon.h"
 #include "TypedMessage.h"
+using std::string;
 
 Logon::Logon(const string& rawFixString) : TypedMessage(rawFixString) {
     if (getValue("35") != "A") {

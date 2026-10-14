@@ -1,5 +1,6 @@
 #include "ResendRequest.h"
 #include "TypedMessage.h"
+using std::string;
 
 ResendRequest::ResendRequest(const string& rawFixString)
     : TypedMessage(rawFixString) {

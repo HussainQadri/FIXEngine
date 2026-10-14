@@ -1,10 +1,11 @@
 #pragma once
 #include "TypedMessage.h"
+#include <string>
 
 class ResendRequest : public TypedMessage {
 public:
-    ResendRequest(const string& rawFixString);
-    string msgType() const;
-    string getBeginSeqNo() const;
-    string getEndSeqNo() const;
+    ResendRequest(const std::string& rawFixString);
+    std::string msgType() const;
+    std::string getBeginSeqNo() const;
+    std::string getEndSeqNo() const;
 };

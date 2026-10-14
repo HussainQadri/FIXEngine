@@ -1,5 +1,6 @@
 #include "TestRequest.h"
 #include "TypedMessage.h"
+using std::string;
 
 TestRequest::TestRequest(const string& rawFixString)
     : TypedMessage(rawFixString) {

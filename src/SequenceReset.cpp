@@ -1,5 +1,6 @@
 #include "SequenceReset.h"
 #include "TypedMessage.h"
+using std::string;
 
 SequenceReset::SequenceReset(const string& rawFixString)
     : TypedMessage(rawFixString) {

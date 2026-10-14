@@ -1,20 +1,21 @@
 #pragma once
 #include "TypedMessage.h"
+#include <string>
 class Logon : public TypedMessage {
 public:
     Logon(const std::string& rawFixString);
-    string getHeartBtInt() const;
-    string msgType() const override;
-    string getEncryptMethod() const;
-    string getRawDataLength() const;
-    string getRawData() const;
-    string getResetSeqNumFlag() const;
-    string getNextExpectedMsgSeqNum() const;
-    string getMaxMessageSize() const;
-    string getNoMsgTypes() const;
-    string getRefMsgType() const;
-    string getMsgDirection() const;
-    string getTestMessageIndicator() const;
-    string getUsername() const;
-    string getPassword() const;
+    std::string getHeartBtInt() const;
+    std::string msgType() const override;
+    std::string getEncryptMethod() const;
+    std::string getRawDataLength() const;
+    std::string getRawData() const;
+    std::string getResetSeqNumFlag() const;
+    std::string getNextExpectedMsgSeqNum() const;
+    std::string getMaxMessageSize() const;
+    std::string getNoMsgTypes() const;
+    std::string getRefMsgType() const;
+    std::string getMsgDirection() const;
+    std::string getTestMessageIndicator() const;
+    std::string getUsername() const;
+    std::string getPassword() const;
 };

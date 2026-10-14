@@ -5,20 +5,20 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
-using std::string;
 class FIXMessage {
 public:
     FIXMessage();
 
-    FIXMessage(const string& rawFixString);
+    FIXMessage(const std::string& rawFixString);
 
-    string getTagAtIndex(size_t i) const;
+    std::string getTagAtIndex(size_t i) const;
 
-    string getValueAtIndex(size_t i) const;
+    std::string getValueAtIndex(size_t i) const;
 
     size_t getFieldCount() const;
 
-    const std::vector<std::pair<string, string>>& getAllFields() const;
+    const std::vector<std::pair<std::string, std::string>>&
+    getAllFields() const;
 
     bool validate() const;
 
@@ -26,23 +26,23 @@ public:
 
     int calculateMessageBodyBytes() const;
 
-    string getValue(const string& tag) const;
+    std::string getValue(const std::string& tag) const;
 
-    std::vector<string> getValues(const string& tag) const;
+    std::vector<std::string> getValues(const std::string& tag) const;
 
     std::string serialize() const;
 
-    void addField(const string& tag, const string& value);
+    void addField(const std::string& tag, const std::string& value);
 
 private:
     void appendField(std::string& cur_message, const std::string& tag,
                      const std::string& value) const;
-    std::vector<std::pair<string, string>> fields;
-    void Parse(const string& rawFixString);
-    std::pair<string, string> extractChecksumPair() const;
-    std::pair<string, string> extractBodyLengthPair() const;
+    std::vector<std::pair<std::string, std::string>> fields;
+    void Parse(const std::string& rawFixString);
+    std::pair<std::string, std::string> extractChecksumPair() const;
+    std::pair<std::string, std::string> extractBodyLengthPair() const;
     pugi::xml_document doc;
     std::set<std::string> tags;
     std::set<std::string> values;
-    std::unordered_map<string, string> m_tagValuePairs;
+    std::unordered_map<std::string, std::string> m_tagValuePairs;
 };

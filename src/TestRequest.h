@@ -1,9 +1,10 @@
 #pragma once
 
 #include "TypedMessage.h"
+#include <string>
 class TestRequest : public TypedMessage {
 public:
-    TestRequest(const string& rawFixString);
-    string msgType() const;
-    string getTestReqID() const;
+    TestRequest(const std::string& rawFixString);
+    std::string msgType() const;
+    std::string getTestReqID() const;
 };
