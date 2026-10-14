@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.15...3.25)
 
-project(MyProject
-  VERSION 1.0
-  DESCRIPTION "FIX Parser"
+project(FIXEngine
+  VERSION 0.1.0
+  DESCRIPTION "A FIX 4.2 engine in modern C++"
   LANGUAGES CXX
 )
 
@@ -26,7 +26,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(Catch2 pugixml)
 
 # 2. Define Library
-add_library(fixparser
+add_library(fixengine
   src/FIXMessage.cpp
   src/FIXMessage.h
   src/FIXDictionary.cpp
@@ -47,13 +47,13 @@ add_library(fixparser
   src/FIXSession.h
   src/FIXSession.cpp
 )
-target_include_directories(fixparser PUBLIC ${CMAKE_SOURCE_DIR}/src)
-target_link_libraries(fixparser PUBLIC pugixml::pugixml)
-target_compile_definitions(fixparser PRIVATE FIX_DICTIONARY_PATH="${CMAKE_SOURCE_DIR}/src/FIX42.xml")
+target_include_directories(fixengine PUBLIC ${CMAKE_SOURCE_DIR}/src)
+target_link_libraries(fixengine PUBLIC pugixml::pugixml)
+target_compile_definitions(fixengine PRIVATE FIX_DICTIONARY_PATH="${CMAKE_SOURCE_DIR}/src/FIX42.xml")
 
 # 3. Main Executable
 add_executable(main src/main.cpp)
-target_link_libraries(main PRIVATE fixparser)
+target_link_libraries(main PRIVATE fixengine)
 
 # Copy the FIX42.xml file to the build directory
 configure_file(${CMAKE_SOURCE_DIR}/src/FIX42.xml ${CMAKE_BINARY_DIR}/FIX42.xml COPYONLY)
@@ -64,16 +64,16 @@ enable_testing()
 # 5. Test Executable
 add_executable(tests tests/test_fixmessage.cpp)
 target_include_directories(tests PRIVATE ${CMAKE_SOURCE_DIR}/src)
-target_link_libraries(tests PRIVATE fixparser Catch2::Catch2WithMain)
+target_link_libraries(tests PRIVATE fixengine Catch2::Catch2WithMain)
 add_executable(dict_tests tests/test_fixdictionary.cpp)
 target_include_directories(dict_tests PRIVATE ${CMAKE_SOURCE_DIR}/src)
-target_link_libraries(dict_tests PRIVATE fixparser Catch2::Catch2WithMain)
+target_link_libraries(dict_tests PRIVATE fixengine Catch2::Catch2WithMain)
 add_executable(heartbeat_tests tests/test_heartbeat.cpp)
 target_include_directories(heartbeat_tests PRIVATE ${CMAKE_SOURCE_DIR}/src)
-target_link_libraries(heartbeat_tests PRIVATE fixparser Catch2::Catch2WithMain)
+target_link_libraries(heartbeat_tests PRIVATE fixengine Catch2::Catch2WithMain)
 add_executable(session_tests tests/test_fixsession.cpp)
 target_include_directories(session_tests PRIVATE ${CMAKE_SOURCE_DIR}/src)
-target_link_libraries(session_tests PRIVATE fixparser Catch2::Catch2WithMain)
+target_link_libraries(session_tests PRIVATE fixengine Catch2::Catch2WithMain)
 # 6. Test Discovery
 include(CTest)
 include(${catch2_SOURCE_DIR}/extras/Catch.cmake)
