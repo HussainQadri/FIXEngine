@@ -16,7 +16,7 @@ void FIXMessage::Parse(const string& rawFixString) {
     string tag;
     string value;
     bool readingTag = true;
-    for (int i = 0; i < rawFixString.size(); i++) {
+    for (size_t i = 0; i < rawFixString.size(); i++) {
         char currentChar = rawFixString[i];
         if (currentChar == '\x01') {
             pairValue.first = tag;
@@ -124,7 +124,7 @@ int FIXMessage::calculateTotalBytes() const {
 int FIXMessage::calculateMessageBodyBytes() const {
     int byteCount = 0;
 
-    for (int i = 2; i < fields.size(); i++) {
+    for (size_t i = 2; i < fields.size(); i++) {
         std::pair<string, string> currentPair = fields.at(i);
         if (currentPair.first == "10") {
             break;
