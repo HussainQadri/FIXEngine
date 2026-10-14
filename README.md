@@ -23,13 +23,18 @@ sequence numbers.
 
 ## Architecture
 
-```mermaid
-flowchart LR
-    wire["Raw bytes<br/>8=FIX.4.2␁9=…␁"] --> msg["FIXMessage<br/>parse / serialize<br/>BodyLength + CheckSum"]
-    dict[("spec/FIX42.xml")] --> fd["FIXDictionary<br/>names, enums,<br/>required fields"]
-    msg --> fd
-    msg --> typed["Typed messages<br/>Logon, Heartbeat, …"]
-    typed --> session["FIXSession<br/>state, sequence numbers,<br/>admin responses"]
+```text
+┌──────────────────┐
+│    FIXSession    │  session state, sequence numbers, admin responses
+├──────────────────┤
+│  Typed messages  │  Logon, Logout, Heartbeat, TestRequest, ...
+├──────────────────┤
+│    FIXMessage    │  parse / serialize, BodyLength + CheckSum
+└────────┬─────────┘
+         │ validated by
+┌────────┴─────────┐
+│  FIXDictionary   │  names, enums, required fields (spec/FIX42.xml)
+└──────────────────┘
 ```
 
 ## Demo
