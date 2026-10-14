@@ -12,6 +12,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 option(FIXENGINE_WARNINGS_AS_ERRORS "Treat compiler warnings as errors" OFF)
+option(FIXENGINE_SANITIZE "Build with AddressSanitizer and UndefinedBehaviorSanitizer" OFF)
 
 set(FIXENGINE_WARNINGS -Wall -Wextra)
 if(FIXENGINE_WARNINGS_AS_ERRORS)
@@ -31,6 +32,11 @@ FetchContent_Declare(
   GIT_TAG v1.14
 )
 FetchContent_MakeAvailable(Catch2 pugixml)
+
+if(FIXENGINE_SANITIZE)
+  add_compile_options(-fsanitize=address,undefined -fno-omit-frame-pointer)
+  add_link_options(-fsanitize=address,undefined)
+endif()
 
 # 2. Define Library
 add_library(fixengine
