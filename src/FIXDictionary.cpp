@@ -96,7 +96,7 @@ bool FIXDictionary::isValidTag(const string& tag) const {
 
 bool FIXDictionary::validate(const FIXMessage& fixMessage) const {
     // Validate header
-    for (const std::pair<string, string>& tagValuePair : m_headerFields) {
+    for (const auto& tagValuePair : m_headerFields) {
         auto it = m_nameTagMap.find(tagValuePair.first);
         if (it == m_nameTagMap.end() ||
             tagValuePair.second == "Y" &&
@@ -111,7 +111,7 @@ bool FIXDictionary::validate(const FIXMessage& fixMessage) const {
     if (it == m_messageFields.end()) {
         return false;
     }
-    for (const std::pair<string, string>& nameRequiredPair : it->second) {
+    for (const auto& nameRequiredPair : it->second) {
         auto tagIt = m_nameTagMap.find(nameRequiredPair.first);
         if (tagIt == m_nameTagMap.end() ||
             nameRequiredPair.second == "Y" &&
@@ -121,7 +121,7 @@ bool FIXDictionary::validate(const FIXMessage& fixMessage) const {
     }
 
     // Validate trailer
-    for (const std::pair<string, string>& tagValuePair : m_trailerFields) {
+    for (const auto& tagValuePair : m_trailerFields) {
         auto it = m_nameTagMap.find(tagValuePair.first);
         if (it == m_nameTagMap.end() ||
             tagValuePair.second == "Y" &&
