@@ -90,8 +90,8 @@ std::vector<FIXMessage> FIXSession::onIncoming(const FIXMessage& message) {
     }
 
     if (incomingSeqNum > m_nextExpectedIncomingSeqNum) {
-        responses.push_back(
-            createResendRequest(m_nextExpectedIncomingSeqNum, incomingSeqNum - 1));
+        responses.push_back(createResendRequest(m_nextExpectedIncomingSeqNum,
+                                                incomingSeqNum - 1));
         return responses;
     }
 
