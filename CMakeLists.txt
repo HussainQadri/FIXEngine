@@ -55,9 +55,6 @@ target_compile_definitions(fixengine PRIVATE FIX_DICTIONARY_PATH="${CMAKE_SOURCE
 add_executable(main src/main.cpp)
 target_link_libraries(main PRIVATE fixengine)
 
-# Copy the FIX42.xml file to the build directory
-configure_file(${CMAKE_SOURCE_DIR}/src/FIX42.xml ${CMAKE_BINARY_DIR}/FIX42.xml COPYONLY)
-
 # 4. Enable Testing (Must be before add_executable for tests)
 enable_testing()
 
